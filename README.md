@@ -1,6 +1,6 @@
-# Project Name
+# Evio | Tele-medicine Platform
 
-This is a template project for backend development using Typescript, Node.js, Express, Mongoose, Bcrypt, JWT, NodeMailer, Multer, ESLint, and Prettier. The aim is to reduce setup time for new backend projects.
+A robust backend for a tele-medicine platform using TypeScript, Node.js, Express.js, Mongoose and Zod etc.
 
 ## Features
 
@@ -41,14 +41,15 @@ Ensure you have the following installed:
 
 - Node.js
 - npm or yarn
+- Git
 
 ### Installation
 
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/your-repository.git
-   cd your-repository
+   git clone https://github.com/Rahad-Ullah/evio-backend.git
+   cd evio-backend
    ```
 
 2. **Install dependencies:**
@@ -105,10 +106,4 @@ Ensure you have the following installed:
    yarn run dev
    ```
 
-### Running the Tests
-
-Explain how to run the automated tests for this system.
-
-```bash
-npm test
-```
+5. Let's enjoy the coding 🚀
