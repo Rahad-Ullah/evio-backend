@@ -1,26 +1,34 @@
 import { z } from 'zod';
-import { USER_ROLES, USER_STATUS } from './user.constant';
+import { USER_GENDER, USER_ROLES, USER_STATUS } from './user.constant';
 
 const createUserZodSchema = z.object({
   body: z.object({
-    name: z.string({ required_error: 'Name is required' }),
-    contact: z.string({ required_error: 'Contact is required' }),
-    email: z.string({ required_error: 'Email is required' }),
-    password: z.string({ required_error: 'Password is required' }),
-    location: z.string({ required_error: 'Location is required' }),
-    profile: z.string().optional(),
+  firstName:  z.string(),
+  lastName:   z.string(),
+  email:      z.string().email(),
+  password:   z.string().min(8),
   }),
 });
 
 const updateUserZodSchema = z.object({
-  name: z.string().optional(),
-  contact: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
-  location: z.string().optional(),
-  image: z.string().optional(),
-  role: z.nativeEnum(USER_ROLES).optional(),
-  status: z.nativeEnum(USER_STATUS).optional(),
+  body: z.object({
+  firstName:  z.string().optional(),
+  lastName:   z.string().optional(),
+  email:      z.string().email().optional(),
+  phone:      z.string().optional(),
+  gender:     z.nativeEnum(USER_GENDER).optional(),
+  dob:        z.string().optional(),
+  occupation: z.string().optional(),
+  address:    z.string().optional(),
+  language:   z.string().optional(),
+  religion:   z.string().optional(),
+  image:      z.string().url().optional(),
+  subscription: z.string().optional(),
+  status:     z.nativeEnum(USER_STATUS).optional(),
+  isOnline:   z.boolean().optional(),
+  isVerified: z.boolean().optional(),
+  isDeleted:  z.boolean().optional(),
+  })
 });
 
 export const UserValidation = {

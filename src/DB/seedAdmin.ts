@@ -4,7 +4,8 @@ import config from '../config';
 import { logger } from '../shared/logger';
 
 const payload = {
-  name: 'Administrator',
+  firstName: 'Mr.',
+  lastName: 'Super Admin',
   email: config.super_admin.email,
   role: USER_ROLES.SUPER_ADMIN,
   password: config.super_admin.password,

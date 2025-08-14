@@ -4,18 +4,17 @@ import { model, Schema } from 'mongoose';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import { IUser, UserModal } from './user.interface';
-import { USER_ROLES, USER_STATUS } from './user.constant';
+import { USER_GENDER, USER_ROLES, USER_STATUS } from './user.constant';
 
 const userSchema = new Schema<IUser, UserModal>(
   {
-    name: {
+    firstName: {
       type: String,
-      required: true,
+      default: '',
     },
-    role: {
+    lastName: {
       type: String,
-      enum: Object.values(USER_ROLES),
-      required: true,
+      default: '',
     },
     email: {
       type: String,
@@ -29,16 +28,62 @@ const userSchema = new Schema<IUser, UserModal>(
       select: 0,
       minlength: 8,
     },
+    role: {
+      type: String,
+      enum: Object.values(USER_ROLES),
+      required: true,
+    },
+    phone: {
+      type: String,
+      default: '',
+    },
+    gender: {
+      type: String,
+      enum: Object.values(USER_GENDER),
+      default: null,
+    },
+    dob: {
+      type: Date,
+      default: null,
+    },
+    occupation: {
+      type: String,
+      default: '',
+    },
+    address: {
+      type: String,
+      default: '',
+    },
+    language: {
+      type: String,
+      default: '',
+    },
+    religion: {
+      type: String,
+      default: '',
+    },
     image: {
       type: String,
       default: 'https://i.ibb.co/z5YHLV9/profile.png',
+    },
+    subscription: {
+      type: Schema.Types.ObjectId,
+      ref: 'Subscription',
     },
     status: {
       type: String,
       enum: Object.values(USER_STATUS),
       default: USER_STATUS.ACTIVE,
     },
+    isOnline: {
+      type: Boolean,
+      default: false,
+    },
     isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
       type: Boolean,
       default: false,
     },

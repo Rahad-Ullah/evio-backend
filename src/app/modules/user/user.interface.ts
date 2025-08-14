@@ -1,16 +1,26 @@
-import { Model } from 'mongoose';
-import { USER_ROLES, USER_STATUS } from './user.constant';
+import { Model, Types } from 'mongoose';
+import { USER_GENDER, USER_ROLES, USER_STATUS } from './user.constant';
 
 export type IUser = {
-  name: string;
-  role: USER_ROLES;
-  contact: string;
+  _id: Types.ObjectId;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
-  location: string;
+  role: USER_ROLES;
+  phone: string;
+  gender: USER_GENDER;
+  dob: Date;
+  occupation: string;
+  address: string;
+  language: string;
+  religion: string;
   image?: string;
+  subscription?: Types.ObjectId;
   status: USER_STATUS;
+  isOnline: boolean;
   isVerified: boolean;
+  isDeleted: boolean;
   authentication?: {
     isResetPassword: boolean;
     oneTimeCode: number;

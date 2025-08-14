@@ -5,6 +5,12 @@ export enum USER_ROLES {
 }
 
 export enum USER_STATUS {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive',
+}
+
+export enum USER_GENDER {
+  MALE = 'Male',
+  FEMALE = 'Female',
+  OTHER = 'Other',
 }
