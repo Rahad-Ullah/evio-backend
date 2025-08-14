@@ -23,4 +23,6 @@ router.post(
   UserController.createAdmin
 );
 
+router.get('/:id', auth(), UserController.getUserById);
+
 export const UserRoutes = router;

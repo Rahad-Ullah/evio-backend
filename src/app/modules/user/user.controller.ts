@@ -36,9 +36,22 @@ const createAdmin = catchAsync(
   }
 );
 
+// get user by id
+const getUserById = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getUserById(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'User data retrieved successfully',
+    data: result,
+  });
+});
+
+// get user profile
 const getUserProfile = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
-  const result = await UserService.getUserProfileFromDB(user.id);
+  const result = await UserService.getUserById(user.id);
 
   sendResponse(res, {
     success: true,
@@ -72,6 +85,7 @@ const updateProfile = catchAsync(
 export const UserController = {
   createUser,
   createAdmin,
+  getUserById,
   getUserProfile,
   updateProfile,
 };

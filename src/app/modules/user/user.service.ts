@@ -75,6 +75,6 @@ const updateProfileToDB = async (
 
 export const UserService = {
   createUserToDB,
-  getUserProfileFromDB: getUserById,
+  getUserById,
   updateProfileToDB,
 };
