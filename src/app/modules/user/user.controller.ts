@@ -4,11 +4,13 @@ import catchAsync from '../../../shared/catchAsync';
 import { getSingleFilePath } from '../../../shared/getFilePath';
 import sendResponse from '../../../shared/sendResponse';
 import { UserService } from './user.service';
+import { USER_ROLES } from './user.constant';
 
+// create user
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { ...userData } = req.body;
-    const result = await UserService.createUserToDB(userData);
+    const payload = { ...req.body };
+    const result = await UserService.createUserToDB(payload);
 
     sendResponse(res, {
       success: true,
@@ -19,9 +21,24 @@ const createUser = catchAsync(
   }
 );
 
+// create admin
+const createAdmin = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const payload = { ...req.body, role: USER_ROLES.ADMIN };
+    const result = await UserService.createUserToDB(payload);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Admin created successfully',
+      data: result,
+    });
+  }
+);
+
 const getUserProfile = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
-  const result = await UserService.getUserProfileFromDB(user);
+  const result = await UserService.getUserProfileFromDB(user.id);
 
   sendResponse(res, {
     success: true,
@@ -52,4 +69,9 @@ const updateProfile = catchAsync(
   }
 );
 
-export const UserController = { createUser, getUserProfile, updateProfile };
+export const UserController = {
+  createUser,
+  createAdmin,
+  getUserProfile,
+  updateProfile,
+};

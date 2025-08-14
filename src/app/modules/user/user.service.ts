@@ -7,49 +7,48 @@ import unlinkFile from '../../../shared/unlinkFile';
 import generateOTP from '../../../util/generateOTP';
 import { IUser } from './user.interface';
 import { User } from './user.model';
-import { USER_ROLES } from './user.constant';
 
+// ----------------- create user service -----------------
 const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
-  //set role
-  payload.role = USER_ROLES.USER;
-  const createUser = await User.create(payload);
-  if (!createUser) {
+  // check if the user is already exist
+  const isExistUser = await User.findOne({ email: payload.email });
+  if (isExistUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'User already exist');
+  }
+
+  const createdUser = await User.create(payload);
+  if (!createdUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create user');
   }
 
   //send email
   const otp = generateOTP();
   const values = {
-    name: createUser.name,
+    name: createdUser.firstName,
     otp: otp,
-    email: createUser.email!,
+    email: createdUser.email!,
   };
   const createAccountTemplate = emailTemplate.createAccount(values);
   emailHelper.sendEmail(createAccountTemplate);
 
-  //save to DB
+  // update user authentication
   const authentication = {
     oneTimeCode: otp,
     expireAt: new Date(Date.now() + 3 * 60000),
   };
-  await User.findOneAndUpdate(
-    { _id: createUser._id },
-    { $set: { authentication } }
-  );
+  await User.findByIdAndUpdate(createdUser._id, { $set: { authentication } });
 
-  return createUser;
+  return createdUser;
 };
 
-const getUserProfileFromDB = async (
-  user: JwtPayload
-): Promise<Partial<IUser>> => {
-  const { id } = user;
-  const isExistUser = await User.isExistUserById(id);
-  if (!isExistUser) {
+// ----------------- get user profile service -----------------
+const getUserById = async (id: string): Promise<Partial<IUser>> => {
+  const result = await User.findById(id);
+  if (!result) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
 
-  return isExistUser;
+  return result;
 };
 
 const updateProfileToDB = async (
@@ -76,6 +75,6 @@ const updateProfileToDB = async (
 
 export const UserService = {
   createUserToDB,
-  getUserProfileFromDB,
+  getUserProfileFromDB: getUserById,
   updateProfileToDB,
 };

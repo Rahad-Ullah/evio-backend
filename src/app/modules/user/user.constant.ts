@@ -1,7 +1,8 @@
 export enum USER_ROLES {
   SUPER_ADMIN = 'SUPER_ADMIN',
   ADMIN = 'ADMIN',
-  USER = 'USER',
+  PATIENT = 'PATIENT',
+  DOCTOR = 'DOCTOR',
 }
 
 export enum USER_STATUS {
