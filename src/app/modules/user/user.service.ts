@@ -21,22 +21,25 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create user');
   }
 
-  //send email
-  const otp = generateOTP();
-  const values = {
-    name: createdUser.firstName,
-    otp: otp,
-    email: createdUser.email!,
-  };
-  const createAccountTemplate = emailTemplate.createAccount(values);
-  emailHelper.sendEmail(createAccountTemplate);
+  // verify email if not verified
+  if (!createdUser.isVerified) {
+    //send email
+    const otp = generateOTP();
+    const values = {
+      name: createdUser.firstName,
+      otp: otp,
+      email: createdUser.email!,
+    };
+    const createAccountTemplate = emailTemplate.createAccount(values);
+    emailHelper.sendEmail(createAccountTemplate);
 
-  // update user authentication
-  const authentication = {
-    oneTimeCode: otp,
-    expireAt: new Date(Date.now() + 3 * 60000),
-  };
-  await User.findByIdAndUpdate(createdUser._id, { $set: { authentication } });
+    // update user authentication
+    const authentication = {
+      oneTimeCode: otp,
+      expireAt: new Date(Date.now() + 3 * 60000),
+    };
+    await User.findByIdAndUpdate(createdUser._id, { $set: { authentication } });
+  }
 
   return createdUser;
 };

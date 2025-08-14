@@ -14,7 +14,6 @@ const updateUserZodSchema = z.object({
   body: z.object({
   firstName:  z.string().optional(),
   lastName:   z.string().optional(),
-  email:      z.string().email().optional(),
   phone:      z.string().optional(),
   gender:     z.nativeEnum(USER_GENDER).optional(),
   dob:        z.string().optional(),
@@ -23,11 +22,6 @@ const updateUserZodSchema = z.object({
   language:   z.string().optional(),
   religion:   z.string().optional(),
   image:      z.string().url().optional(),
-  subscription: z.string().optional(),
-  status:     z.nativeEnum(USER_STATUS).optional(),
-  isOnline:   z.boolean().optional(),
-  isVerified: z.boolean().optional(),
-  isDeleted:  z.boolean().optional(),
   })
 });
 

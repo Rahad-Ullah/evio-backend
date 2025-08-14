@@ -24,7 +24,7 @@ const createUser = catchAsync(
 // create admin
 const createAdmin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const payload = { ...req.body, role: USER_ROLES.ADMIN };
+    const payload = { ...req.body, role: USER_ROLES.ADMIN, isVerified: true };
     const result = await UserService.createUserToDB(payload);
 
     sendResponse(res, {

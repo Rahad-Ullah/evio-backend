@@ -116,6 +116,12 @@ const userSchema = new Schema<IUser, UserModal>(
   { timestamps: true }
 );
 
+// Apply to all update operations
+userSchema.pre(['updateOne', 'updateMany', 'findOneAndUpdate'], function (next) {
+  this.setOptions({ runValidators: true });
+  next();
+});
+
 //exist user check
 userSchema.statics.isExistUserById = async (id: string) => {
   const isExist = await User.findById(id);
