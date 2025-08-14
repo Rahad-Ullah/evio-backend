@@ -51,22 +51,21 @@ const getUserById = async (id: string): Promise<Partial<IUser>> => {
   return result;
 };
 
-const updateProfileToDB = async (
-  user: JwtPayload,
+const updateUserById = async (
+  id: string,
   payload: Partial<IUser>
 ): Promise<Partial<IUser | null>> => {
-  const { id } = user;
   const isExistUser = await User.isExistUserById(id);
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
 
   //unlink file here
-  if (payload.image) {
+  if (payload.image && isExistUser.image) {
     unlinkFile(isExistUser.image);
   }
 
-  const updateDoc = await User.findOneAndUpdate({ _id: id }, payload, {
+  const updateDoc = await User.findByIdAndUpdate(id, payload, {
     new: true,
   });
 
@@ -76,5 +75,5 @@ const updateProfileToDB = async (
 export const UserService = {
   createUserToDB,
   getUserById,
-  updateProfileToDB,
+  updateUserById,
 };

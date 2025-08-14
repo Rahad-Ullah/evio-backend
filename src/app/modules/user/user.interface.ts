@@ -16,6 +16,8 @@ export type IUser = {
   language: string;
   religion: string;
   image?: string;
+  doctor?: Types.ObjectId;
+  patient?: Types.ObjectId;
   subscription?: Types.ObjectId;
   status: USER_STATUS;
   isOnline: boolean;

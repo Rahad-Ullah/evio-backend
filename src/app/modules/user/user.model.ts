@@ -66,6 +66,14 @@ const userSchema = new Schema<IUser, UserModal>(
       type: String,
       default: 'https://i.ibb.co/z5YHLV9/profile.png',
     },
+    doctor: {
+      type: Schema.Types.ObjectId,
+      ref: 'Doctor',
+    },
+    patient: {
+      type: Schema.Types.ObjectId,
+      ref: 'Patient',
+    },
     subscription: {
       type: Schema.Types.ObjectId,
       ref: 'Subscription',
