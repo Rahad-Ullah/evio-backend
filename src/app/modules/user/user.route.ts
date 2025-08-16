@@ -26,6 +26,13 @@ router.post(
   UserController.createAdmin
 );
 
+// update user by id
+router.patch(
+  '/:id',
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
+  UserController.toggleUserStatus
+);
+
 // delete user by id
 router.delete(
   '/:id',

@@ -58,6 +58,19 @@ const updateProfile = catchAsync(
   }
 );
 
+// toggle user status
+const toggleUserStatus = catchAsync(async (req: Request, res: Response) => {
+  const existingUser = await UserService.getUserById(req.params.id);
+  const result = await UserService.updateUserById(req.params.id, {status: existingUser.status === USER_STATUS.ACTIVE ? USER_STATUS.INACTIVE : USER_STATUS.ACTIVE});
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'User status updated successfully',
+    data: result,
+  });
+});
+
 // delete user by id
 const deleteUserById = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.deleteUserById(req.params.id);
@@ -144,6 +157,7 @@ export const UserController = {
   createUser,
   createAdmin,
   updateProfile,
+  toggleUserStatus,
   deleteUserById,
   deleteUserProfile,
   deleteUserByEmail,
