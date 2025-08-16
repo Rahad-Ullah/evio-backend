@@ -5,6 +5,7 @@ import { UserController } from './user.controller';
 import { UserValidation } from './user.validation';
 import fileUploadHandler from '../../middlewares/fileUploadHandler';
 import { USER_ROLES } from './user.constant';
+import { AuthValidation } from '../auth/auth.validation';
 const router = express.Router();
 
 router
@@ -24,5 +25,11 @@ router.post(
 );
 
 router.get('/:id', auth(), UserController.getUserById);
+
+router.delete(
+  '/public/delete-account',
+  validateRequest(AuthValidation.createLoginZodSchema),
+  UserController.deleteUserByEmail
+);
 
 export const UserRoutes = router;

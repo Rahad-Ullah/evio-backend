@@ -16,7 +16,9 @@ const createLoginZodSchema = z.object({
       .string({ required_error: 'Email is required' })
       .email('Invalid email')
       .nonempty('Email cannot be empty'),
-    password: z.string({ required_error: 'Password is required' }),
+    password: z
+      .string({ required_error: 'Password is required' })
+      .nonempty('Password cannot be empty'),
   }),
 });
 

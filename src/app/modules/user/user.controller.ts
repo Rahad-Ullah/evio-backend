@@ -82,10 +82,23 @@ const updateProfile = catchAsync(
   }
 );
 
+// delete user by email
+const deleteUserByEmail = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.deleteUserByEmail(req.body);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'User deleted successfully',
+    data: result,
+  });
+});
+
 export const UserController = {
   createUser,
   createAdmin,
   getUserById,
   getUserProfile,
   updateProfile,
+  deleteUserByEmail
 };

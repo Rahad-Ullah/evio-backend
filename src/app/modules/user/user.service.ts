@@ -6,6 +6,9 @@ import unlinkFile from '../../../shared/unlinkFile';
 import generateOTP from '../../../util/generateOTP';
 import { IUser } from './user.interface';
 import { User } from './user.model';
+import { USER_ROLES } from './user.constant';
+import mongoose from 'mongoose';
+import { Patient } from '../patient/patient.model';
 
 // ----------------- create user service -----------------
 const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
@@ -45,7 +48,7 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
 
 // ----------------- get user profile service -----------------
 const getUserById = async (id: string): Promise<Partial<IUser>> => {
-  const result = await User.findById(id);
+  const result = await User.findById(id).populate('patient doctor');
   if (!result) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
@@ -53,6 +56,7 @@ const getUserById = async (id: string): Promise<Partial<IUser>> => {
   return result;
 };
 
+// ----------------- update user profile service -----------------
 const updateUserById = async (
   id: string,
   payload: Partial<IUser>
@@ -74,8 +78,41 @@ const updateUserById = async (
   return updateDoc;
 };
 
+// ----------------- delete user service -----------------
+const deleteUserByEmail = async (payload: Partial<IUser>) => {
+  // check if the user is exist
+  const existingUser = await User.findOne({ email: payload.email }).select(
+    '+password'
+  );
+  if (!existingUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+  }
+
+  // check if user already deleted
+  if (existingUser.isDeleted) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'User already deleted');
+  }
+
+  // match password
+  if (
+    payload.password &&
+    !(await User.isMatchPassword(payload.password, existingUser.password))
+  ) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Password is incorrect');
+  }
+
+  const result = await User.findByIdAndUpdate(
+    existingUser._id,
+    { $set: { isDeleted: true } },
+    { new: true }
+  );
+
+  return result;
+};
+
 export const UserService = {
   createUserToDB,
   getUserById,
   updateUserById,
+  deleteUserByEmail,
 };
