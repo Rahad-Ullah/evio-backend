@@ -12,6 +12,7 @@ const disclaimerSchema = new Schema<IDisclaimer, DisclaimerModel>(
     content: {
       type: String,
       required: true,
+      default: '',
     },
   },
   {
