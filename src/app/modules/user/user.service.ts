@@ -9,6 +9,7 @@ import { User } from './user.model';
 import { USER_ROLES } from './user.constant';
 import mongoose from 'mongoose';
 import { Patient } from '../patient/patient.model';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 // ----------------- create user service -----------------
 const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
@@ -44,20 +45,6 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
   }
 
   return createdUser;
-};
-
-// ----------------- get user profile service -----------------
-const getUserById = async (id: string): Promise<Partial<IUser>> => {
-  const result = await User.findById(id).populate('patient doctor');
-  if (!result) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
-  }
-
-  if (result.isDeleted) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'User is deleted!');
-  }
-
-  return result;
 };
 
 // ----------------- update user profile service -----------------
@@ -128,10 +115,47 @@ const deleteUserByEmail = async (payload: Partial<IUser>) => {
   return result;
 };
 
+// ----------------- get user profile service -----------------
+const getUserById = async (id: string): Promise<Partial<IUser>> => {
+  const result = await User.findById(id).populate('patient doctor');
+  if (!result) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+  }
+
+  if (result.isDeleted) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'User is deleted!');
+  }
+
+  return result;
+};
+
+// ----------------- get all users -----------------
+const getAllUsers = async (query: Record<string, unknown>) => {
+  const userQuery = new QueryBuilder(
+    User.find({ isDeleted: false, role: { $ne: USER_ROLES.SUPER_ADMIN } }),
+    query
+  )
+    .filter()
+    .search(['email', 'firstName', 'lastName', 'phone'])
+    .sort()
+    .paginate();
+
+  const [users, pagination] = await Promise.all([
+    userQuery.modelQuery.lean(),
+    userQuery.getPaginationInfo(),
+  ]);
+
+  return {
+    users,
+    pagination,
+  };
+};
+
 export const UserService = {
   createUserToDB,
-  getUserById,
   updateUserById,
   deleteUserById,
   deleteUserByEmail,
+  getUserById,
+  getAllUsers,
 };

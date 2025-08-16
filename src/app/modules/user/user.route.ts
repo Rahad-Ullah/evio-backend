@@ -19,13 +19,12 @@ router
   )
   .delete(auth(), UserController.deleteUserProfile);
 
+// create admin
 router.post(
   '/create-admin',
   validateRequest(UserValidation.createUserZodSchema),
   UserController.createAdmin
 );
-
-router.get('/:id', auth(), UserController.getUserById);
 
 // delete user by id
 router.delete(
@@ -40,5 +39,11 @@ router.delete(
   validateRequest(AuthValidation.createLoginZodSchema),
   UserController.deleteUserByEmail
 );
+
+// get single user by id
+router.get('/:id', auth(), UserController.getUserById);
+
+// get all users
+router.get('/', auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN), UserController.getAllUsers);
 
 export const UserRoutes = router;

@@ -37,38 +37,6 @@ const createAdmin = catchAsync(
   }
 );
 
-// get user by id
-const getUserById = catchAsync(async (req: Request, res: Response) => {
-  const result = await UserService.getUserById(req.params.id);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: StatusCodes.OK,
-    message: 'User data retrieved successfully',
-    data: result,
-  });
-});
-
-// get user profile
-const getUserProfile = catchAsync(async (req: Request, res: Response) => {
-  const user = req.user;
-  const result = await UserService.getUserById(user.id);
-
-  if (result.status !== USER_STATUS.ACTIVE) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      'Your account has been deactivated. Please contact support.'
-    );
-  }
-
-  sendResponse(res, {
-    success: true,
-    statusCode: StatusCodes.OK,
-    message: 'Profile data retrieved successfully',
-    data: result,
-  });
-});
-
 // update profile
 const updateProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -127,13 +95,59 @@ const deleteUserByEmail = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// get user by id
+const getUserById = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getUserById(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'User data retrieved successfully',
+    data: result,
+  });
+});
+
+// get user profile
+const getUserProfile = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user;
+  const result = await UserService.getUserById(user.id);
+
+  if (result.status !== USER_STATUS.ACTIVE) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'Your account has been deactivated. Please contact support.'
+    );
+  }
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Profile data retrieved successfully',
+    data: result,
+  });
+});
+
+// get all users
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getAllUsers(req.query);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Users data retrieved successfully',
+    data: result.users,
+    pagination: result.pagination,
+  });
+});
+
 export const UserController = {
   createUser,
   createAdmin,
-  getUserById,
-  getUserProfile,
   updateProfile,
   deleteUserById,
   deleteUserProfile,
   deleteUserByEmail,
+  getUserById,
+  getUserProfile,
+  getAllUsers,
 };
