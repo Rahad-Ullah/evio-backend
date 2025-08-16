@@ -14,4 +14,6 @@ router.post(
   DisclaimerController.createUpdateDisclaimer
 ); 
 
+router.get('/:type', DisclaimerController.getDisclaimer);
+
 export const DisclaimerRoutes = router;
