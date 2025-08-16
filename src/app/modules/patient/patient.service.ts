@@ -75,8 +75,16 @@ const createPatientIntoDB = async (payload: Partial<IUser>) => {
 };
 
 // ----------------- update patient service -----------------
-const updatePatientIntoDB = async (id: string, payload: Partial<IPatient>) => {
-    return payload
+const updatePatientIntoDB = async (userId: string, payload: Partial<IPatient>) => {
+  // check if the patient exists
+  const isExistPatient = await Patient.findOne({ user: userId });
+  if (!isExistPatient) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Patient not found');
+  }
+
+  // update patient
+  const result = await Patient.findByIdAndUpdate(isExistPatient._id, payload, { new: true }).lean();
+  return result;
 };
 
 // ----------------- delete patient service -----------------
