@@ -53,6 +53,10 @@ const getUserById = async (id: string): Promise<Partial<IUser>> => {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
 
+  if (result.isDeleted) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'User is deleted!');
+  }
+
   return result;
 };
 
@@ -78,7 +82,21 @@ const updateUserById = async (
   return updateDoc;
 };
 
-// ----------------- delete user service -----------------
+// ----------------- delete user by id -----------------
+const deleteUserById = async (id: string) => {
+  // check if the user is exist
+  const existingUser = await User.findById(id);
+  if (!existingUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+  }
+
+  const result = await User.findByIdAndUpdate(id, {
+    $set: { isDeleted: true },
+  });
+  return result;
+};
+
+// ----------------- delete user by email -----------------
 const deleteUserByEmail = async (payload: Partial<IUser>) => {
   // check if the user is exist
   const existingUser = await User.findOne({ email: payload.email }).select(
@@ -114,5 +132,6 @@ export const UserService = {
   createUserToDB,
   getUserById,
   updateUserById,
+  deleteUserById,
   deleteUserByEmail,
 };

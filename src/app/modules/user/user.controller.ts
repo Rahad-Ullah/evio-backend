@@ -4,7 +4,8 @@ import catchAsync from '../../../shared/catchAsync';
 import { getSingleFilePath } from '../../../shared/getFilePath';
 import sendResponse from '../../../shared/sendResponse';
 import { UserService } from './user.service';
-import { USER_ROLES } from './user.constant';
+import { USER_ROLES, USER_STATUS } from './user.constant';
+import ApiError from '../../../errors/ApiError';
 
 // create user
 const createUser = catchAsync(
@@ -53,6 +54,13 @@ const getUserProfile = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
   const result = await UserService.getUserById(user.id);
 
+  if (result.status !== USER_STATUS.ACTIVE) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'Your account has been deactivated. Please contact support.'
+    );
+  }
+
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -82,6 +90,31 @@ const updateProfile = catchAsync(
   }
 );
 
+// delete user by id
+const deleteUserById = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.deleteUserById(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'User deleted successfully',
+    data: result,
+  });
+});
+
+// delete user profile
+const deleteUserProfile = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user;
+  const result = await UserService.deleteUserById(user.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'User profile deleted successfully',
+    data: result,
+  });
+});
+
 // delete user by email
 const deleteUserByEmail = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.deleteUserByEmail(req.body);
@@ -100,5 +133,7 @@ export const UserController = {
   getUserById,
   getUserProfile,
   updateProfile,
-  deleteUserByEmail
+  deleteUserById,
+  deleteUserProfile,
+  deleteUserByEmail,
 };

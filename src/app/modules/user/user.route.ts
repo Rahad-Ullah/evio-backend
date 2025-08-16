@@ -16,7 +16,8 @@ router
     fileUploadHandler(),
     validateRequest(UserValidation.updateUserZodSchema),
     UserController.updateProfile
-  );
+  )
+  .delete(auth(), UserController.deleteUserProfile);
 
 router.post(
   '/create-admin',
@@ -26,8 +27,16 @@ router.post(
 
 router.get('/:id', auth(), UserController.getUserById);
 
+// delete user by id
 router.delete(
-  '/public/delete-account',
+  '/:id',
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
+  UserController.deleteUserById
+);
+
+// delete user by email
+router.delete(
+  '/delete-account',
   validateRequest(AuthValidation.createLoginZodSchema),
   UserController.deleteUserByEmail
 );
