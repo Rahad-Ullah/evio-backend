@@ -3,8 +3,6 @@ import { BLOOD_GROUP, RELATIONSHIP } from './patient.constants';
 
 export const patientSchema = z.object({
   body: z.object({
-    user: z.string().nonempty('User cannot be empty'),
-
     allergy: z.object({
       haveAllergies: z.boolean().optional(),
       allergies: z.array(z.string()).optional(),
@@ -60,7 +58,7 @@ export const patientSchema = z.object({
       address: z.string().optional().optional(),
       relationship: z.nativeEnum(RELATIONSHIP).nullable().optional(),
       isMedicalDecisionMaker: z.boolean().optional(),
-    }),
+    }).optional(),
 
     primaryPhysician: z.object({
       firstName: z.string().optional(),
@@ -69,8 +67,8 @@ export const patientSchema = z.object({
       email: z.string().email().optional(),
       address: z.string().optional(),
       clinicName: z.string().optional(),
-    }),
-  }),
+    }).optional(),
+  }).strict('Unnecessary fields found'),
 });
 
 export const PatientValidations = { patientSchema };

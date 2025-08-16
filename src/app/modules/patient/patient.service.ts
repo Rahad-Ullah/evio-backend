@@ -7,9 +7,10 @@ import generateOTP from '../../../util/generateOTP';
 import { emailTemplate } from '../../../shared/emailTemplate';
 import { emailHelper } from '../../../helpers/emailHelper';
 import mongoose from 'mongoose';
+import { IPatient } from './patient.interface';
 
 // --------------- create admin service -----------------
-const createAdminIntoDB = async (payload: Partial<IUser>) => {
+const createPatientIntoDB = async (payload: Partial<IUser>) => {
   // check if the user already exists
   const isExistUser = await User.findOne({ email: payload.email });
   if (isExistUser) {
@@ -73,4 +74,11 @@ const createAdminIntoDB = async (payload: Partial<IUser>) => {
   }
 };
 
-export const PatientServices = { createAdminIntoDB };
+// ----------------- update patient service -----------------
+const updatePatientIntoDB = async (id: string, payload: Partial<IPatient>) => {
+    return payload
+};
+
+// ----------------- delete patient service -----------------
+
+export const PatientServices = { createPatientIntoDB, updatePatientIntoDB };
