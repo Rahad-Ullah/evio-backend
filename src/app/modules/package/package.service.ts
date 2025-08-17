@@ -39,4 +39,10 @@ const deletePackage = async (id: string) => {
   return result;
 };
 
-export const PackageServices = { createPackage, updatePackage, deletePackage };
+// get all packages
+const getAllPackages = async () => {
+  const result = await Package.find({ isDeleted: false });
+  return result;
+};
+
+export const PackageServices = { createPackage, updatePackage, deletePackage, getAllPackages };

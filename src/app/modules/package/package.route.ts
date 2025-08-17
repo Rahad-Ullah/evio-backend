@@ -30,4 +30,7 @@ router.delete(
   PackageController.deletePackage
 );
 
+// get all packages
+router.get('/', auth(), PackageController.getAllPackages);
+
 export const PackageRoutes = router;
