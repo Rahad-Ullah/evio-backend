@@ -22,4 +22,11 @@ router.delete(
   ChatController.deleteChat
 );
 
+// get my chats
+router.get(
+  '/my-chats',
+  auth(USER_ROLES.PATIENT, USER_ROLES.DOCTOR),
+  ChatController.getMyChats
+);
+
 export const ChatRoutes = router;

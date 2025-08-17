@@ -1,3 +1,4 @@
+import { JwtPayload } from 'jsonwebtoken';
 import { IChat } from './chat.interface';
 import { Chat } from './chat.model';
 
@@ -40,4 +41,65 @@ const deleteChatFromDB = async (chatId: string) => {
   return result;
 };
 
-export const ChatServices = { createChatIntoDB, deleteChatFromDB };
+// ---------------- get chats by user id service ----------------
+const getChatsByIdFromDB = async (
+  userId: string,
+  query: Record<string, any>
+) => {
+  const chats = await Chat.find({ participants: { $in: [userId] } })
+    .populate({
+      path: 'participants',
+      select: 'firstName lastName email image isOnline',
+      match: {
+        isDeleted: false,
+        _id: { $ne: userId }, // Exclude userId in the populated participants
+        ...(query?.searchTerm && {
+          $or: [
+            { firstName: { $regex: query.searchTerm, $options: 'i' } },
+            { lastName: { $regex: query.searchTerm, $options: 'i' } },
+          ],
+        }),
+      }, // Apply $regex only if search is valid },
+    })
+    .select('participants updatedAt')
+    .sort('-updatedAt');
+
+  // Filter out chats where no participants match the search (empty participants)
+  const filteredChats = chats?.filter(
+    (chat: any) => chat?.participants?.length > 0
+  );
+
+  //Use Promise.all to get the last message for each chat
+  const chatList: IChat[] = await Promise.all(
+    filteredChats?.map(async (chat: any) => {
+      const data = chat?.toObject();
+
+      //   const lastMessage: IMessage | null = await Message.findOne({
+      //     chat: chat?._id,
+      //   })
+      //     .sort({ createdAt: -1 })
+      //     .select('text image createdAt sender');
+
+      //   // find unread messages count
+      //   const unreadCount = await Message.countDocuments({
+      //     chat: chat?._id,
+      //     seenBy: { $nin: [userId] },
+      //   });
+
+      return {
+        ...data,
+        participants: data.participants,
+        // unreadCount: unreadCount || 0,
+        // lastMessage: lastMessage || null,
+      };
+    })
+  );
+
+  return chatList;
+};
+
+export const ChatServices = {
+  createChatIntoDB,
+  deleteChatFromDB,
+  getChatsByIdFromDB,
+};
