@@ -3,6 +3,7 @@ import { AuthRoutes } from '../app/modules/auth/auth.route';
 import { UserRoutes } from '../app/modules/user/user.route';
 import { PatientRoutes } from '../app/modules/patient/patient.route';
 import { DisclaimerRoutes } from '../app/modules/disclaimer/disclaimer.route';
+import { SpecialtyRoutes } from '../app/modules/specialty/specialty.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -21,6 +22,10 @@ const apiRoutes = [
   {
     path: '/disclaimer',
     route: DisclaimerRoutes,
+  },
+  {
+    path: '/specialties',
+    route: SpecialtyRoutes,
   },
 ];
 
