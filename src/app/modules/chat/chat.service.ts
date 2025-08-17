@@ -1,6 +1,8 @@
 import { JwtPayload } from 'jsonwebtoken';
 import { IChat } from './chat.interface';
 import { Chat } from './chat.model';
+import { IMessage } from '../message/message.interface';
+import { Message } from '../message/message.model';
 
 // ---------------- create chat service ---------------
 const createChatIntoDB = async (
@@ -72,25 +74,26 @@ const getChatsByIdFromDB = async (
   //Use Promise.all to get the last message for each chat
   const chatList: IChat[] = await Promise.all(
     filteredChats?.map(async (chat: any) => {
-      const data = chat?.toObject();
+      const chatData = chat?.toObject();
 
-      //   const lastMessage: IMessage | null = await Message.findOne({
-      //     chat: chat?._id,
-      //   })
-      //     .sort({ createdAt: -1 })
-      //     .select('text image createdAt sender');
+      const lastMessage: IMessage | null = await Message.findOne({
+        chat: chat?._id,
+      })
+        .sort({ createdAt: -1 })
+        .select('text image type sender')
+        .populate('sender', 'firstName lastName image');
 
-      //   // find unread messages count
-      //   const unreadCount = await Message.countDocuments({
-      //     chat: chat?._id,
-      //     seenBy: { $nin: [userId] },
-      //   });
+      // find unread messages count
+      const unreadCount = await Message.countDocuments({
+        chat: chat?._id,
+        seenBy: { $nin: [userId] },
+      });
 
       return {
-        ...data,
-        participants: data.participants,
-        // unreadCount: unreadCount || 0,
-        // lastMessage: lastMessage || null,
+        ...chatData,
+        participants: chatData.participants,
+        unreadCount: unreadCount || 0,
+        lastMessage: lastMessage || null,
       };
     })
   );
