@@ -52,7 +52,8 @@ const getAllSpecialties = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: 200,
     message: 'Specialty data retrieved successfully',
-    data: result,
+    data: result.specialties,
+    pagination: result.pagination,
   });
 });
 
