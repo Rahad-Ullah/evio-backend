@@ -3,10 +3,10 @@ import { USER_GENDER } from './user.constant';
 
 const createUserZodSchema = z.object({
   body: z.object({
-    firstName: z.string().nonempty('First name cannot be empty'),
-    lastName: z.string().nonempty('Last name cannot be empty'),
-    email: z.string().email('Invalid email').nonempty('Email cannot be empty'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
+    firstName: z.string().optional(),
+    lastName:  z.string().optional(),
+    email:     z.string().email('Invalid email').nonempty('Email cannot be empty'),
+    password:  z.string().min(8, 'Password must be at least 8 characters'),
   }),
 });
 
