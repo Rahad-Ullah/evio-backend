@@ -13,7 +13,10 @@ const createChatIntoDB = async (
   }
 
   // create chat if it does not exist
-  const isExist = await Chat.findOne({ participants: { $all: participants } });
+  const isExist = await Chat.findOne({
+    participants: { $all: participants },
+    isDeleted: false,
+  });
   if (isExist) {
     return isExist;
   }
@@ -22,4 +25,19 @@ const createChatIntoDB = async (
   return result;
 };
 
-export const ChatServices = { createChatIntoDB };
+// ---------------- delete chat service ----------------
+const deleteChatFromDB = async (chatId: string) => {
+  const isExist = await Chat.findById(chatId);
+  if (!isExist) {
+    throw new Error('Chat not found');
+  }
+
+  const result = await Chat.findByIdAndUpdate(
+    chatId,
+    { isDeleted: true },
+    { new: true }
+  );
+  return result;
+};
+
+export const ChatServices = { createChatIntoDB, deleteChatFromDB };
