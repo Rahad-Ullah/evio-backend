@@ -33,4 +33,29 @@ const updateDoctor = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const DoctorController = { createDoctor, updateDoctor };
+// get doctor by id
+const getDoctorById = catchAsync(async (req: Request, res: Response) => {
+  const result = await DoctorServices.getDoctorById(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: 'Doctor data retrieved successfully',
+    data: result,
+  });
+});
+
+// get all doctors
+const getAllDoctors = catchAsync(async (req: Request, res: Response) => {
+  const result = await DoctorServices.getAllDoctors(req.query);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: 'Doctors data retrieved successfully',
+    data: result.doctors,
+    pagination: result.pagination,
+  });
+});
+
+export const DoctorController = { createDoctor, updateDoctor, getDoctorById, getAllDoctors };

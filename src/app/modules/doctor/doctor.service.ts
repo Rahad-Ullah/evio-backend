@@ -9,6 +9,7 @@ import generateOTP from '../../../util/generateOTP';
 import { emailTemplate } from '../../../shared/emailTemplate';
 import { emailHelper } from '../../../helpers/emailHelper';
 import unlinkFile from '../../../shared/unlinkFile';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 // --------------- create doctor service -----------------
 const createDoctorIntoDB = async (payload: Partial<IUser>) => {
@@ -99,4 +100,58 @@ const updateDoctorIntoDB = async (
   return result;
 };
 
-export const DoctorServices = { createDoctorIntoDB, updateDoctorIntoDB };
+// get single doctor by id
+const getDoctorById = async (id: string) => {
+  const result = await Doctor.findById(id)
+    .populate([{ path: 'user' }, { path: 'specialty', select: 'name image' }])
+    .lean();
+  return result;
+};
+
+// get all doctors
+const getAllDoctors = async (query: Record<string, unknown>) => {
+  const doctorQuery = new QueryBuilder(
+    Doctor.find()
+      .populate([
+        {
+          path: 'user',
+          select: 'firstName lastName image isOnline gender',
+          match: query.gender
+            ? { gender: { $regex: query.gender as string, $options: 'i' } }
+            : {},
+        },
+        {
+          path: 'specialty',
+          select: 'name image',
+          match: query.searchTerm
+            ? { name: { $regex: query.searchTerm as string, $options: 'i' } }
+            : {},
+        },
+      ])
+      .select('user specialty')
+      .lean(),
+    query
+  );
+
+  const [doctors, pagination] = await Promise.all([
+    doctorQuery.modelQuery.lean(),
+    doctorQuery.getPaginationInfo(),
+  ]);
+
+  // remove doctors where specialty did not match
+  const filteredDoctors = doctors.filter(
+    (doc: any) => doc.specialty && doc.user
+  );
+
+  return {
+    doctors: filteredDoctors,
+    pagination,
+  };
+};
+
+export const DoctorServices = {
+  createDoctorIntoDB,
+  updateDoctorIntoDB,
+  getDoctorById,
+  getAllDoctors,
+};

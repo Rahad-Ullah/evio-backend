@@ -25,4 +25,10 @@ router.patch(
   DoctorController.updateDoctor
 );
 
+// get doctor by id
+router.get('/:id', auth(), DoctorController.getDoctorById);
+
+// get all doctors
+router.get('/', auth(), DoctorController.getAllDoctors);
+
 export const DoctorRoutes = router;
