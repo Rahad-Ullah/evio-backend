@@ -1,15 +1,16 @@
 import { StatusCodes } from 'http-status-codes';
 import { IUser } from '../user/user.interface';
 import { User } from '../user/user.model';
-import { DoctorModel } from './doctor.interface';
+import { DoctorModel, IDoctor } from './doctor.interface';
 import { Doctor } from './doctor.model';
 import ApiError from '../../../errors/ApiError';
 import mongoose from 'mongoose';
 import generateOTP from '../../../util/generateOTP';
 import { emailTemplate } from '../../../shared/emailTemplate';
 import { emailHelper } from '../../../helpers/emailHelper';
+import unlinkFile from '../../../shared/unlinkFile';
 
-// create doctor
+// --------------- create doctor service -----------------
 const createDoctorIntoDB = async (payload: Partial<IUser>) => {
   // check if the user already exists
   const isExistUser = await User.findOne({ email: payload.email });
@@ -74,4 +75,28 @@ const createDoctorIntoDB = async (payload: Partial<IUser>) => {
   }
 };
 
-export const DoctorServices = {createDoctorIntoDB};
+// ------------ update doctor service -----------------
+const updateDoctorIntoDB = async (
+  userId: string,
+  payload: Partial<IDoctor>
+) => {
+  // check if the doctor exists
+  const isExistDoctor = await Doctor.findOne({ user: userId });
+  if (!isExistDoctor) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Doctor not found');
+  }
+
+  // update doctor
+  const result = await Doctor.findByIdAndUpdate(isExistDoctor._id, payload, {
+    new: true,
+  }).lean();
+
+  // unlink file here
+  if (payload.boardCertification && isExistDoctor.boardCertification) {
+    unlinkFile(isExistDoctor.boardCertification);
+  }
+
+  return result;
+};
+
+export const DoctorServices = { createDoctorIntoDB, updateDoctorIntoDB };
