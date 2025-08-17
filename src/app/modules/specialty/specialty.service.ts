@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
 import { Specialty } from './specialty.model';
 import unlinkFile from '../../../shared/unlinkFile';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 // ----------------- create specialty -----------------
 const createSpecialty = async (payload: any): Promise<any> => {
@@ -49,8 +50,34 @@ const deleteSpecialty = async (id: string): Promise<any> => {
     throw new ApiError(StatusCodes.NOT_FOUND, 'Specialty not found');
   }
 
-  const result = await Specialty.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+  const result = await Specialty.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true }
+  );
   return result;
-}
+};
 
-export const SpecialtyServices = { createSpecialty, updateSpecialty, deleteSpecialty };
+// get all specialties
+const getAllSpecialties = async (query: Record<string, unknown>) => {
+  const specialtyQuery = new QueryBuilder(
+    Specialty.find({ isDeleted: false }),
+    query
+  )
+    .filter()
+    .search(['name'])
+    .sort()
+    .paginate();
+
+  const [specialties, pagination] = await Promise.all([
+    specialtyQuery.modelQuery.lean(),
+    specialtyQuery.getPaginationInfo(),
+  ]);
+
+  return {
+    specialties,
+    pagination,
+  };
+};
+
+export const SpecialtyServices = { createSpecialty, updateSpecialty, deleteSpecialty, getAllSpecialties };

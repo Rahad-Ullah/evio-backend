@@ -33,4 +33,7 @@ router.delete(
   SpecialtyController.deleteSpecialty
 );
 
+// get all specialties
+router.get('/', SpecialtyController.getAllSpecialties);
+
 export const SpecialtyRoutes = router;
