@@ -1,7 +1,9 @@
 import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
 import { Specialty } from './specialty.model';
+import unlinkFile from '../../../shared/unlinkFile';
 
+// ----------------- create specialty -----------------
 const createSpecialty = async (payload: any): Promise<any> => {
   // check if the specialty is already exist
   const isExist = await Specialty.findOne({ name: payload.name });
@@ -13,4 +15,30 @@ const createSpecialty = async (payload: any): Promise<any> => {
   return result;
 };
 
-export const SpecialtyServices = { createSpecialty };
+// ----------------- update specialty -----------------
+const updateSpecialty = async (id: string, payload: any): Promise<any> => {
+  // check if the specialty exists
+  const isExistSpecialty = await Specialty.findById(id);
+  if (!isExistSpecialty) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Specialty not found');
+  }
+
+  // check if the name already taken
+  if (isExistSpecialty.name !== payload.name) {
+    const isExist = await Specialty.findOne({ name: payload.name });
+    if (isExist) {
+      throw new ApiError(StatusCodes.CONFLICT, 'Specialty name already taken!');
+    }
+  }
+
+  const result = await Specialty.findByIdAndUpdate(id, payload, { new: true });
+
+  // unlink file here
+  if (payload.image && isExistSpecialty.image) {
+    unlinkFile(isExistSpecialty.image);
+  }
+
+  return result;
+};
+
+export const SpecialtyServices = { createSpecialty, updateSpecialty };

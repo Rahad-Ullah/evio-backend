@@ -18,4 +18,18 @@ const createSpecialty = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const SpecialtyController = { createSpecialty };
+// update doctor specialty
+const updateSpecialty = catchAsync(async (req: Request, res: Response) => {
+  const image = getSingleFilePath(req.files, 'image');
+  const payload = { ...req.body, image };
+  const result = await SpecialtyServices.updateSpecialty(req.params.id, payload);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: 'Specialty updated successfully',
+    data: result,
+  });
+});
+
+export const SpecialtyController = { createSpecialty, updateSpecialty };
