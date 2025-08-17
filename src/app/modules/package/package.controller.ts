@@ -16,4 +16,18 @@ const createPackage = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const PackageController = { createPackage };
+// update package
+const updatePackage = catchAsync(async (req: Request, res: Response) => {
+  const payload = { ...req.body };
+  const result = await PackageServices.updatePackage(req.params.id, payload);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: 'Package updated successfully',
+    data: result,
+  });
+});
+
+
+export const PackageController = { createPackage, updatePackage };

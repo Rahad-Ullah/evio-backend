@@ -16,4 +16,15 @@ const createPackageZodSchema = z.object({
     .strict('Unnecessary fields found'),
 });
 
-export const PackageValidations = { createPackageZodSchema };
+// update package schema
+const updatePackageZodSchema = z.object({
+  body: z
+    .object({
+      type: z.nativeEnum(PACKAGE_TYPE).optional(),
+      price: z.number().positive('Price must be greater than 0').optional(),
+      benefits: z.array(z.string()).optional(),
+    })
+    .strict('Unnecessary fields found'),
+});
+
+export const PackageValidations = { createPackageZodSchema, updatePackageZodSchema };
