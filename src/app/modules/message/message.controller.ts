@@ -21,4 +21,23 @@ const createMessage = catchAsync(
   }
 );
 
-export const MessageController = { createMessage };
+// get messages by chat id
+const getChatMessages = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await MessageServices.getChatMessages(
+      req.params.id,
+      req.query,
+      req.user
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Messages retrieved successfully',
+      data: result?.messages,
+      pagination: result?.pagination,
+    });
+  }
+);
+
+export const MessageController = { createMessage, getChatMessages };

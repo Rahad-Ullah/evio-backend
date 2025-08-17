@@ -8,6 +8,7 @@ import fileUploadHandler from '../../middlewares/fileUploadHandler';
 
 const router = express.Router();
 
+// create message
 router.post(
   '/create',
   auth(USER_ROLES.PATIENT, USER_ROLES.DOCTOR),
@@ -15,5 +16,12 @@ router.post(
   validateRequest(MessageValidations.createMessageZodSchema),
   MessageController.createMessage
 ); 
+
+// get chat messages
+router.get(
+  '/:id',
+  auth(USER_ROLES.PATIENT, USER_ROLES.DOCTOR),
+  MessageController.getChatMessages
+);
 
 export const MessageRoutes = router;
