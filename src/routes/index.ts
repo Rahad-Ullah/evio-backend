@@ -6,6 +6,7 @@ import { DisclaimerRoutes } from '../app/modules/disclaimer/disclaimer.route';
 import { SpecialtyRoutes } from '../app/modules/specialty/specialty.route';
 import { DoctorRoutes } from '../app/modules/doctor/doctor.route';
 import { PackageRoutes } from '../app/modules/package/package.route';
+import { ContactRoutes } from '../app/modules/contact/contact.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -36,6 +37,10 @@ const apiRoutes = [
   {
     path: '/packages',
     route: PackageRoutes,
+  },
+  {
+    path: '/contact',
+    route: ContactRoutes,
   },
 ];
 
