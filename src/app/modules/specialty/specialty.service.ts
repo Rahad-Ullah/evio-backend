@@ -41,4 +41,16 @@ const updateSpecialty = async (id: string, payload: any): Promise<any> => {
   return result;
 };
 
-export const SpecialtyServices = { createSpecialty, updateSpecialty };
+// ----------------- delete specialty -----------------
+const deleteSpecialty = async (id: string): Promise<any> => {
+  // check if the specialty exists
+  const isExistSpecialty = await Specialty.findById(id);
+  if (!isExistSpecialty) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Specialty not found');
+  }
+
+  const result = await Specialty.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+  return result;
+}
+
+export const SpecialtyServices = { createSpecialty, updateSpecialty, deleteSpecialty };

@@ -32,4 +32,16 @@ const updateSpecialty = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const SpecialtyController = { createSpecialty, updateSpecialty };
+// delete doctor specialty
+const deleteSpecialty = catchAsync(async (req: Request, res: Response) => {
+  const result = await SpecialtyServices.deleteSpecialty(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: 'Specialty deleted successfully',
+    data: result,
+  });
+});
+
+export const SpecialtyController = { createSpecialty, updateSpecialty, deleteSpecialty };
