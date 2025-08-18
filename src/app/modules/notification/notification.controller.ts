@@ -19,4 +19,16 @@ const getMyNotification = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const NotificationController = { getMyNotification };
+// read my notification
+const readMyNotifications = catchAsync(async (req: Request, res: Response) => {
+  const result = await NotificationServices.readUserNotificationToDB(req.user.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Notification read successfully',
+    data: result,
+  });
+});
+
+export const NotificationController = { getMyNotification, readMyNotifications };

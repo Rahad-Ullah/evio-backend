@@ -31,4 +31,19 @@ const getUserNotificationFromDB = async (
   };
 };
 
-export const NotificationServices = { getUserNotificationFromDB };
+// ----------------- mark all notifications as read -----------------
+const readUserNotificationToDB = async (userId: string): Promise<boolean> => {
+  await Notification.bulkWrite([
+    {
+      updateMany: {
+        filter: { receiver: userId, isRead: false },
+        update: { $set: { isRead: true } },
+        upsert: false,
+      },
+    },
+  ]);
+
+  return true;
+};
+
+export const NotificationServices = { getUserNotificationFromDB, readUserNotificationToDB };
