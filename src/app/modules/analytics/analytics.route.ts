@@ -19,4 +19,11 @@ router.get(
   AnalyticsController.getMonthlyUserGrowth
 );
 
+// get monthly total revenue
+router.get(
+  '/revenue-growth',
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN),
+  AnalyticsController.getMonthlyTotalRevenue
+);
+
 export const AnalyticsRoutes = router;

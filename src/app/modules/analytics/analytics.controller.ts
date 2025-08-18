@@ -28,4 +28,16 @@ const getMonthlyUserGrowth = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const AnalyticsController = { getOverview, getMonthlyUserGrowth };
+// get monthly total revenue
+const getMonthlyTotalRevenue = catchAsync(async (req: Request, res: Response) => {
+  const result = await AnalyticsServices.getMonthlyTotalRevenue(req.query);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Monthly total revenue retrieved successfully',
+    data: result,
+  });
+});
+
+export const AnalyticsController = { getOverview, getMonthlyUserGrowth, getMonthlyTotalRevenue };

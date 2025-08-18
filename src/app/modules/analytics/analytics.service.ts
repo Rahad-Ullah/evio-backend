@@ -68,4 +68,10 @@ const getMonthlyUserGrowth = async (query: Record<string, unknown>) => {
   return formattedResult;
 };
 
-export const AnalyticsServices = { getOverview, getMonthlyUserGrowth };
+// ---------------- get monthly total revenue ---------------
+const getMonthlyTotalRevenue = async (query: Record<string, unknown>) => {
+    const year = Number(query.year) || new Date().getFullYear();
+  return [];
+}
+
+export const AnalyticsServices = { getOverview, getMonthlyUserGrowth, getMonthlyTotalRevenue };
