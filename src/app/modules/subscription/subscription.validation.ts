@@ -16,10 +16,6 @@ const subscriptionZodSchema = z.object({
     expiresDate: z
       .string({ required_error: 'Expires date is required' })
       .nonempty('Expires date cannot be empty'),
-    status: z.nativeEnum(SUBSCRIPTION_STATUS),
-    amount: z
-      .number({ required_error: 'Amount is required' })
-      .positive('Amount must be greater than 0'),
     paymentProvider: z.nativeEnum(PAYMENT_PROVIDER),
     transactionId: z
       .string({ required_error: 'Transaction ID is required' })
