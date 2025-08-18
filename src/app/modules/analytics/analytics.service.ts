@@ -1,3 +1,4 @@
+import { Subscription } from '../subscription/subscription.model';
 import { USER_ROLES } from '../user/user.constant';
 import { User } from '../user/user.model';
 
@@ -19,8 +20,8 @@ const getOverview = async () => {
 
 // ---------------- get monthly user growth ---------------
 const getMonthlyUserGrowth = async (query: Record<string, unknown>) => {
-    const year = Number(query.year) || new Date().getFullYear();
-    
+  const year = Number(query.year) || new Date().getFullYear();
+
   const result = await User.aggregate([
     {
       $match: {
@@ -42,20 +43,7 @@ const getMonthlyUserGrowth = async (query: Record<string, unknown>) => {
   ]);
 
   // Map month number (1-12) to name
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
+  const monthNames = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
   const formattedResult = monthNames.map((name, index) => {
     const monthData = result.find(item => item._id === index + 1); // Mongo month is 1-based
@@ -69,9 +57,47 @@ const getMonthlyUserGrowth = async (query: Record<string, unknown>) => {
 };
 
 // ---------------- get monthly total revenue ---------------
-const getMonthlyTotalRevenue = async (query: Record<string, unknown>) => {
-    const year = Number(query.year) || new Date().getFullYear();
-  return [];
-}
+const getMonthlyTotalRevenue = async (query: Record<string, any>) => {
+  const year = Number(query.year) || new Date().getFullYear();
 
-export const AnalyticsServices = { getOverview, getMonthlyUserGrowth, getMonthlyTotalRevenue };
+  // Step 1: MongoDB aggregation
+  const result = await Subscription.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: new Date(`${year}-01-01`),
+          $lt: new Date(`${year + 1}-01-01`),
+        },
+      },
+    },
+    {
+      $group: {
+        _id: { $month: '$createdAt' },
+        amount: { $sum: '$amount' },
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  // Step 2: All 12 month names
+  const monthNames = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  // Step 3: Merge with full 12 months
+  const finalResult = monthNames.map((name, index) => {
+    const monthData = result.find(item => item._id === index + 1);
+    return {
+      month: name,
+      amount: monthData ? monthData.amount : 0,
+    };
+  });
+
+  return finalResult;
+};
+
+export const AnalyticsServices = {
+  getOverview,
+  getMonthlyUserGrowth,
+  getMonthlyTotalRevenue,
+};
