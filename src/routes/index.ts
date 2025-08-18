@@ -10,6 +10,7 @@ import { ContactRoutes } from '../app/modules/contact/contact.route';
 import { ChatRoutes } from '../app/modules/chat/chat.route';
 import { MessageRoutes } from '../app/modules/message/message.route';
 import { NotificationRoutes } from '../app/modules/notification/notification.route';
+import { AnalyticsRoutes } from '../app/modules/analytics/analytics.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -56,6 +57,10 @@ const apiRoutes = [
   {
     path: '/notifications',
     route: NotificationRoutes,
+  },
+  {
+    path: '/analytics',
+    route: AnalyticsRoutes,
   },
 ];
 
