@@ -22,4 +22,18 @@ router.get(
   SubscriptionController.getAllSubscriptions
 );
 
+// get my subscriptions
+router.get(
+  '/my-subscriptions',
+  auth(USER_ROLES.PATIENT),
+  SubscriptionController.getMySubscriptions
+);
+
+// get subscription by user id
+router.get(
+  '/:id',
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN),
+  SubscriptionController.getSubscriptionsByUserId
+);
+
 export const SubscriptionRoutes = router;

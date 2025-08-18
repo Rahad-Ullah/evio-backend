@@ -37,7 +37,7 @@ const createSubscriptionIntoDB = async (payload: ISubscription) => {
   return result;
 };
 
-// get all subscriptions
+// ------------- get all subscriptions service ------------
 const getAllSubscriptions = async (query: Record<string, any>) => {
   let filter: Record<string, any> = {};
 
@@ -79,7 +79,23 @@ const getAllSubscriptions = async (query: Record<string, any>) => {
   return { subscriptions, pagination };
 };
 
+// ------------- get subscription by user id  ------------
+const getSubscriptionsByUserId = async (userId: string) => {
+  const result = await Subscription.find({ user: userId }).populate([
+    {
+      path: 'user',
+      select: 'firstName lastName email image',
+    },
+    {
+      path: 'package',
+      select: 'type price',
+    },
+  ]);
+  return result;
+}
+
 export const SubscriptionServices = {
   createSubscriptionIntoDB,
   getAllSubscriptions,
+  getSubscriptionsByUserId,
 };

@@ -33,4 +33,28 @@ export const getAllSubscriptions = catchAsync(async (req: Request, res: Response
   });
 });
 
-export const SubscriptionController = { createSubscription, getAllSubscriptions };
+// get subscription by user id
+export const getSubscriptionsByUserId = catchAsync(async (req: Request, res: Response) => {
+  const result = await SubscriptionServices.getSubscriptionsByUserId(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Subscription retrieved successfully',
+    data: result,
+  });
+});
+
+// get my subscriptions
+export const getMySubscriptions = catchAsync(async (req: Request, res: Response) => {
+  const result = await SubscriptionServices.getSubscriptionsByUserId(req.user.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Subscriptions retrieved successfully',
+    data: result,
+  });
+});
+
+export const SubscriptionController = { createSubscription, getAllSubscriptions, getSubscriptionsByUserId, getMySubscriptions };
