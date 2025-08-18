@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import { Package } from '../package/package.model';
 import { User } from '../user/user.model';
 import { ISubscription } from './subscription.interface';
@@ -36,4 +37,49 @@ const createSubscriptionIntoDB = async (payload: ISubscription) => {
   return result;
 };
 
-export const SubscriptionServices = { createSubscriptionIntoDB };
+// get all subscriptions
+const getAllSubscriptions = async (query: Record<string, any>) => {
+  let filter: Record<string, any> = {};
+
+  if (query.searchTerm) {
+    // First find all matching users
+    const matchedUsers = await User.find({
+      $or: [
+        { firstName: { $regex: query.searchTerm, $options: 'i' } },
+        { lastName: { $regex: query.searchTerm, $options: 'i' } },
+        { email: { $regex: query.searchTerm, $options: 'i' } },
+      ],
+    }).select('_id');
+
+    filter.user = { $in: matchedUsers.map(u => u._id.toString()) };
+  }
+
+  const subscriptionQuery = new QueryBuilder(
+    Subscription.find(filter).populate([
+      {
+        path: 'user',
+        select: 'firstName lastName email image',
+      },
+      {
+        path: 'package',
+        select: 'type price',
+      },
+    ]),
+    query
+  )
+    .paginate()
+    .filter()
+    .sort();
+
+  const [subscriptions, pagination] = await Promise.all([
+    subscriptionQuery.modelQuery.lean(),
+    subscriptionQuery.getPaginationInfo(),
+  ]);
+
+  return { subscriptions, pagination };
+};
+
+export const SubscriptionServices = {
+  createSubscriptionIntoDB,
+  getAllSubscriptions,
+};
