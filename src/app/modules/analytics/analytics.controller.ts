@@ -40,4 +40,16 @@ const getMonthlyTotalRevenue = catchAsync(async (req: Request, res: Response) =>
   });
 });
 
-export const AnalyticsController = { getOverview, getMonthlyUserGrowth, getMonthlyTotalRevenue };
+// get user ratio
+const getUserRatio = catchAsync(async (req: Request, res: Response) => {
+  const result = await AnalyticsServices.getActiveInactiveUserRatio();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'User ratio retrieved successfully',
+    data: result,
+  });
+});
+
+export const AnalyticsController = { getOverview, getMonthlyUserGrowth, getMonthlyTotalRevenue, getUserRatio };

@@ -115,8 +115,30 @@ const getMonthlyTotalRevenue = async (query: Record<string, any>) => {
   return finalResult;
 };
 
+// ---------------- get active/inactive user ratio ---------------
+const getActiveInactiveUserRatio = async () => {
+  const result = await User.aggregate([
+    {
+      $group: {
+        _id: '$status',
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        status: '$_id',
+        count: 1,
+      },
+    },
+  ]);
+
+  return result;
+};
+
 export const AnalyticsServices = {
   getOverview,
   getMonthlyUserGrowth,
   getMonthlyTotalRevenue,
+  getActiveInactiveUserRatio,
 };

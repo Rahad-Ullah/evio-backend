@@ -26,4 +26,11 @@ router.get(
   AnalyticsController.getMonthlyTotalRevenue
 );
 
+// get active inactive user ratio
+router.get(
+  '/user-ratio',
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN),
+  AnalyticsController.getUserRatio
+);
+
 export const AnalyticsRoutes = router;
