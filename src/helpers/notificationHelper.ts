@@ -2,7 +2,7 @@ import { INotification } from '../app/modules/notification/notification.interfac
 import { Notification } from '../app/modules/notification/notification.model';
 
 export const sendNotifications = async (
-  payload: INotification
+  payload: Partial<INotification>
 ): Promise<INotification> => {
   const result = await Notification.create(payload);
 

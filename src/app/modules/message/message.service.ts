@@ -4,6 +4,10 @@ import { IMessage } from './message.interface';
 import { Message } from './message.model';
 import ApiError from '../../../errors/ApiError';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { MESSAGE_TYPE } from './message.constants';
+import { sendNotifications } from '../../../helpers/notificationHelper';
+import { NOTIFICATION_TYPE } from '../notification/notification.constants';
+import { Types } from 'mongoose';
 
 // ----------------- create message service ---------------
 const createMessage = async (payload: IMessage): Promise<IMessage> => {
@@ -22,6 +26,26 @@ const createMessage = async (payload: IMessage): Promise<IMessage> => {
   const io = global.io;
   if (io) {
     io.emit(`getMessage::${payload.chat}`, result);
+  }
+
+  // ✅ Find the receiver(s): all participants except the sender
+  const receivers = isChatExist.participants.filter(
+    (participantId: Types.ObjectId) =>
+      participantId.toString() !== payload.sender.toString()
+  );
+
+  // notify the receiver(s) for attachment
+  if (payload.type === MESSAGE_TYPE.IMAGE) {
+    await Promise.all(
+      receivers.map((receiverId: Types.ObjectId) =>
+        sendNotifications({
+          type: NOTIFICATION_TYPE.ATTACHMENT,
+          title: 'Attachment',
+          receiver: receiverId,
+          referenceId: result._id.toString(),
+        })
+      )
+    );
   }
 
   // update the chat to sort it to the top
