@@ -33,18 +33,18 @@ router.patch(
   UserController.toggleUserStatus
 );
 
-// delete user by id
-router.delete(
-  '/:id',
-  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
-  UserController.deleteUserById
-);
-
 // delete user by email
 router.delete(
   '/delete-account',
   validateRequest(AuthValidation.createLoginZodSchema),
   UserController.deleteUserByEmail
+);
+
+// delete user by id
+router.delete(
+  '/:id',
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
+  UserController.deleteUserById
 );
 
 // get single user by id
