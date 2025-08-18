@@ -12,9 +12,28 @@ const getOverview = async () => {
     role: USER_ROLES.DOCTOR,
   });
 
+  const totalSubscriptions = await Subscription.countDocuments();
+
+  const totalRevenue = await Subscription.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalAmount: { $sum: '$amount' },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        totalAmount: 1,
+      },
+    },
+  ]);
+
   return {
     totalPatients,
     totalDoctors,
+    totalSubscriptions,
+    totalRevenue: totalRevenue[0]?.totalAmount || 0,
   };
 };
 
