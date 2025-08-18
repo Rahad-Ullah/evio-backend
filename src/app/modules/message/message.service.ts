@@ -54,8 +54,9 @@ export const getChatMessages = async (
   // get messages
   const messageQuery = new QueryBuilder(
     Message.find({ chat: chatId })
-      .populate('sender', 'firstName lastName email image')
-      .sort({ createdAt: -1 }),
+      .populate('sender', 'firstName lastName image')
+      .sort({ createdAt: -1 })
+      .lean(),
     query
   )
     .paginate()
