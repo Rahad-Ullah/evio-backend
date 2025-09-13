@@ -48,4 +48,20 @@ const createFile = catchAsync(
   }
 );
 
-export const FileController = { createFile };
+// update file
+const updateFile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const payload = { ...req.body };
+
+    const result = await FileServices.updateFileIntoDB(req.params.id, payload);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'File updated successfully',
+      data: result,
+    });
+  }
+);
+
+export const FileController = { createFile, updateFile };

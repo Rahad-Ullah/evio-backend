@@ -8,6 +8,7 @@ import { USER_ROLES } from '../user/user.constant';
 
 const router = express.Router();
 
+// create file
 router.post(
   '/create',
   auth(USER_ROLES.PATIENT),
@@ -15,5 +16,14 @@ router.post(
   validateRequest(FileValidations.createFileZodSchema),
   FileController.createFile
 ); 
+
+// update file
+router.patch(
+  '/:id',
+  auth(USER_ROLES.PATIENT),
+  fileUploadHandler(),
+  validateRequest(FileValidations.updateFileZodSchema),
+  FileController.updateFile
+);
 
 export const FileRoutes = router;
