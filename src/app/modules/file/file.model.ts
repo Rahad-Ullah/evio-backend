@@ -10,7 +10,7 @@ const fileSchema = new Schema<IFile, FileModel>(
     },
     size: {
       type: Number,
-      required: true,
+      required: false,
     },
     category: {
       type: String,
@@ -20,11 +20,11 @@ const fileSchema = new Schema<IFile, FileModel>(
     extension: {
       type: String,
       enum: Object.values(FILE_EXTENSION),
-      required: true,
+      required: false,
     },
     path: {
       type: String,
-      required: true,
+      required: false,
     },
     parent: {
       type: Schema.Types.ObjectId,
